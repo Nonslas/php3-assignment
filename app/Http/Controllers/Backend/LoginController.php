@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
+
+    function __construct()
+    {
+        // $this->middleware('auth')->except('login');
+    }
+
     public function showLoginForm()
     {
-        // echo Auth::id();
-        // dd(Hash::make('admin'));
-        // dd(Auth::check());
     	return view('backend.auth');
     }
 
@@ -21,11 +24,18 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials, true)) {
-            // return redirect()->route('dashboard');
-            echo 'success';
+            // dd(Auth::user());
+            return redirect()->route('dashboard');
         }
 
-        // return redirect()->route('login');
+        return redirect()->route('login');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+
+        return redirect()->route('login');
     }
 
 }

@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +38,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('backend.products.create');
+        return view('backend.products.create', [
+            'categories' => Category::all()
+        ]);
     }
 
     /**
@@ -44,7 +51,29 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'star' => 'required',
+            'image' => 'required',
+            'price' => 'required|digits_between:0,999999999',
+            'category_id' => 'required',
+        ], [
+            'price.digits_between' => 'Price must greater than 0'
+        ]);
+
+        $product = new Product;
+
+        $product->fill($request->all());
+
+        if ($request->hasFile('image')) {
+            $extension = $request->file('image')->extension();
+            $path = $request->file('image')->storeAs('products', uniqid() . '.' . $extension, 'public');
+            $product->image = '/storage/' . $path;
+        }
+
+        $product->save();
+
+        return redirect()->route('admin.products.index');
     }
 
     /**
@@ -87,10 +116,28 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required',
+            'star' => 'required',
+            'image' => 'required',
+            'price' => 'required|digits_between:0,999999999',
+            'category_id' => 'required',
+        ], [
+            'price.digits_between' => 'Price must greater than 0'
+        ]);
+
         $product = Product::find($id);
         $product->fill($request->all());
 
+        if ($request->hasFile('image')) {
+            $extension = $request->file('image')->extension();
+            $path = $request->file('image')->storeAs('products', uniqid() . '.' . $extension, 'public');
+            $product->image = '/storage/' . $path;
+        }
+
         $product->save();
+
+        return redirect()->route('admin.products.index');
     }
 
     /**

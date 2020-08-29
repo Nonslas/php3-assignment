@@ -10,8 +10,7 @@ class HomeController extends Controller
 {
 	function __construct()
     {
-    	// var_dump(Auth::id());
-    	// $this->middleware('auth');
+    	$this->middleware('auth');
     }
 
     public function index(Request $request)

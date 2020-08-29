@@ -23,6 +23,7 @@ Route::get('/categories/{id}/edit', 'CategoryController@edit')->name('admin.cate
 Route::post('/categories/{id}', 'CategoryController@update')->name('admin.categories.update');
 
 Route::get('/login', 'LoginController@showLoginForm')->name('login');
+Route::get('/logout', 'LoginController@logout')->name('logout');
 Route::post('/login', 'LoginController@login');
 
 // Auth::routes();
